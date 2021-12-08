@@ -1,0 +1,310 @@
+---
+title: "Kira-plastinina-1"
+author: "Alfonce Mburu"
+date: "12/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## 1.1 Specifying the Data Analytic Question
+
+## 1.2 Defining the Metric for Success
+
+## 1.3 Understanding the Context
+
+## 1.4 Recording the Experimental Design
+
+## 1.5 Data Relevance
+
+## 2. Reading the Data
+```{r}
+# importing the dataset
+#
+KP_df <- read.csv("http://bit.ly/EcommerceCustomersDataset")
+View(KP_df)
+
+```
+
+```{r}
+# Checking the top of the dataset
+#
+
+head(KP_df)
+
+```
+```{r}
+# Checking the bottom
+#
+
+tail(KP_df)
+
+
+```
+```{r}
+# checking the shape of the data
+#
+dim(KP_df)
+
+```
+```{r}
+# Checking whether each column has an appropriate datatype
+#
+str(KP_df)
+
+```
+## Tidying the dataset
+
+```{r}
+
+#install.packages("pacman")
+#
+
+require(pacman)
+pacman::p_load(pacman,dplyr,GGally,ggplot2,lubridate,mice,factoextra,NbClust)
+
+```
+
+```{r}
+# Checking for outliers
+#
+numeric_cols <- select_if(KP_df, is.numeric)
+
+#is.numeric(advert_data)
+head(numeric_cols)
+
+for (x in numeric_cols){
+  boxplot(x)
+}
+```
+```{r}
+# 
+#
+
+
+
+```
+
+```{r}
+# Checking for missing data
+#
+sum(is.na(KP_df))
+colSums(is.na(KP_df))
+
+
+```
+
+
+seems like a similar records in the dataset. Considering the dataset has 12330 records, I will drop the null values
+
+
+```{r}
+# Dealing with missing data 
+#
+KP_df1 <- na.omit(KP_df)
+dim(KP_df1)
+```
+14 records dropped
+
+```{r}
+
+# Checking for duplicates
+#
+duplicates <- KP_df1[duplicated(KP_df1), ]
+duplicates
+
+
+
+```
+
+
+```{r}
+# Dealing with the duplicates
+#
+
+KP_df1 <- KP_df1[!duplicated(KP_df1),]
+length(which(duplicated.data.frame(KP_df1)))
+
+```
+## Exploratory Data Analysis
+
+## Univariate Ananlysis
+
+```{r}
+# checking the dataset 
+#
+head(KP_df1)
+
+```
+
+```{r}
+
+ggplot(KP_df1, aes(x = Administrative )) + 
+    geom_histogram(aes(y=..density..), colour="black", fill="white")+
+    geom_density(alpha=.2, fill="blue")+ ggtitle("Distribution of Visitors in Administrative related sites")
+```
+```{r}
+ggplot(KP_df1, aes(x = Informational )) + 
+    geom_histogram(aes(y=..density..), colour="black", fill="white")+
+    geom_density(alpha=.2, fill="blue")+ ggtitle("Distribution of Visitors in Information related sites")
+```
+
+
+```{r}
+ggplot(KP_df1, aes(x = ProductRelated )) + 
+    geom_histogram(aes(y=..density..), colour="black", fill="white")+
+    geom_density(alpha=.2, fill="blue")+ ggtitle("Distribution of Visitors in Product related sites")
+```
+
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+# ```{r}
+# # Checking the distribution of each numeric column
+# #
+# density_plots <- function(name){
+#   ggplot(KP_df1, aes(x = Col )) + 
+#     geom_histogram(aes(y=..density..), colour="black", fill="white")+
+#     geom_density(alpha=.2, fill="blue")
+# }
+# 
+# ```
+# 
+# 
+# ```{r}
+# # Checking the density of the visits in the different categories
+# #
+# density_plots("Informational")
+# 
+# ```
+
+
+## Implementation of the solution
+
+### Feature Engineering
+```{r}
+unique(KP_df1$VisitorType)
+unique(KP_df1$Weekend)
+unique(KP_df$Revenue)
+```
+
+
+```{r}
+KP_df1$Revenue <- factor(KP_df1$Revenue,levels = c('FALSE', 'TRUE'),labels = c(1,2))
+
+
+KP_df1$Weekend <- ifelse(KP_df1$Weekend == "FALSE", 0,1)
+
+
+KP_df1$VisitorType <- ifelse(KP_df1$VisitorType == "Returning_Visitor", 0, ifelse(KP_df1$VisitorType == "New_Visitor",1,2))
+
+
+```
+
+```{r}
+head(KP_df1)
+```
+
+### Performing K-means
+
+```{r}
+# 
+
+
+```
+
+
+```{r}
+
+#[,c(1,3,5,7,,8,9,10,16,17)]
+
+# selecting the features to use
+
+X <- KP_df1[,c(1,3,5,7,8,9,10,16,17)]
+
+X
+
+labels <-KP_df1[,18]
+
+labels
+
+```
+```{r}
+str(X)
+#X <- as.numeric(X)
+```
+
+
+```{r}
+# Scaling the features
+#
+X_1 <- scale(X)
+
+```
+
+
+```{r}
+# Visualising the outcome
+
+fviz_nbclust(x=X_1,FUNcluster = kmeans, method="silhouette")
+
+```
+the best number to work with is 2
+
+```{r}
+# applying kmeans
+#
+
+result<-kmeans(X_1,2,iter.max = 5)
+
+
+```
+
+```{r}
+fviz_cluster(result,data = X_1)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
