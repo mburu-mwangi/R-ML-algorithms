@@ -260,7 +260,7 @@ labels
 ```
 ```{r}
 str(X)
-#X <- as.numeric(X)
+## X <- as.numeric(X)
 ```
 
 
@@ -293,6 +293,29 @@ result<-kmeans(X_1,2,iter.max = 5)
 fviz_cluster(result,data = X_1)
 
 ```
+
+## Hierarchical Clustering
+
+```{r}
+# Obtaining the distance
+# compute the Euclidean distance between observations
+#
+
+euc.dist <- dist(X_1,method = "euclidian")
+
+# Hierarchical clustering model
+#
+
+model <- hclust(euc.dist,method = "complete")
+
+# Plotting the dendrogram to visualize the similarity between points
+#
+plot(model, cex = 0.6, hang = -1)
+model
+
+
+```
+The visual is not that good as I cannot really tell what is what.
 
 
 
